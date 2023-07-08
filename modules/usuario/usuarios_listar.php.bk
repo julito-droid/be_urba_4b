@@ -1,0 +1,116 @@
+<?php
+include '../../func_resources/php/funciones.php';
+
+$error = false;
+$config = include '../../func_resources/php/config.php';
+
+try {
+  $dsn = 'mysql:host=' . $config['db']['host'] . ';dbname=' . $config['db']['name'];
+  $conexion = new PDO($dsn, $config['db']['user'], $config['db']['pass'], $config['db']['options']);
+
+  if (isset($_POST['apellido'])) {
+    $consultaSQL = "SELECT * FROM tbl_usuarios WHERE usr__numero_identificacion LIKE '%" . $_POST['busqueda'] . "%'";
+  } else {
+    $consultaSQL = "SELECT * FROM tbl_usuarios";
+  }
+
+  $sentencia = $conexion->prepare($consultaSQL);
+  $sentencia->execute();
+
+  $resultados = $sentencia->fetchAll();
+
+} catch(PDOException $error) {
+  $error= $error->getMessage();
+}
+
+$titulo = isset($_POST['busqueda']) ? 'Lista de usuarios (' . $_POST['busqueda'] . ')' : 'Lista de usuarios';
+?>
+
+<?php include "../../templates/header.php"; ?>
+
+<?php
+if ($error) {
+  ?>
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-danger" role="alert">
+          <?= $error ?>
+        </div>
+      </div>
+    </div>
+  </div>
+  <?php
+}
+?>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <a href="usuario_registro.php"  class="btn btn-primary mt-4">Crear usuario</a>
+      <hr>
+      <?php if ($sentencia->rowCount()) { ?>
+      <form method="post" class="form-inline">
+        <div class="form-group mr-3">
+          <input type="text" id="busqueda" name="busqueda" placeholder="Buscar por Identificacion" class="form-control">
+        </div>
+        <button type="submit" name="submit" class="btn btn-primary">Ver resultados</button>
+      </form>
+      <?php } ?>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="mt-3"><?= $titulo ?></h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th># Documento</th>
+            <th colspan="2">Nombre(s)</th>
+            <th colspan="2">Apellido(s)</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Tipo de usuario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          if ($resultados && $sentencia->rowCount() > 0) {
+            foreach ($resultados as $fila) {
+              ?>
+              <tr>
+                <td><?php echo escapar($fila["usr__numero_identificacion"]); ?></td>
+                <td><?php echo escapar($fila["usr__nombre1"]); ?></td>
+                <td style="color: lightgreen;"><?php echo escapar($fila["usr__nombre2"]); ?></td>
+                <td><?php echo escapar($fila["usr__apellido1"]); ?></td>
+                <td style="color: lightgreen;"><?php echo escapar($fila["usr__apellido2"]); ?></td>
+                <td><?php echo escapar($fila["usr__correo_electronico"]); ?></td>
+                <td><?php echo escapar($fila["usr__direccion"]); ?></td>
+                <td><?php echo escapar($fila["usr__numero_celular"]); ?></td>
+                <td><?php echo escapar($fila["usr__tipo_usuario"]); ?></td>
+                
+                <td>
+                  <a href="<?= 'usuario_borrar.php?identificacion=' . escapar($fila["usr__numero_identificacion"]) . '&correo=' . escapar($fila["usr__correo_electronico"]) . '&contrasena=' . escapar($fila["usr__contrasena"]) ?>"><i class="bi bi-file-x" style="color: red;"></i> Borrar</a>
+                  <br>
+                  <a href="<?= 'usuario_editar.php?identificacion=' . escapar($fila["usr__numero_identificacion"]) ?>"><i class="bi bi-pencil-fill" style="color: green;"></i> Editar</a>
+                </td>
+              </tr>
+              <?php
+            }
+          } elseif (!$sentencia->rowCount()) { ?>
+          	<tr>
+         		<td colspan="10"><i><strong>No hay registros de usuarios</strong></i></td>	
+          	</tr>
+          <?php } ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<?php include "../../templates/footer.php"; ?>
