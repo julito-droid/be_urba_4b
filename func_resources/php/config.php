@@ -5,7 +5,8 @@ return [
     'host' => 'localhost',
     'user' => 'root',
     'pass' => '',
-    'name' => 'be_urban_4b',
+    'name' => 'db_pagina_web',
+    'trdm' => 'FeederMatic',
     'options' => [
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]

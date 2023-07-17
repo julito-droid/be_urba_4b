@@ -10,7 +10,7 @@ if (!$conexion) {
 $sql = file_get_contents("../../data/db.sql");
 
 if (mysqli_multi_query($conexion, $sql)) {
-  echo "La base de datos 'be_urban_4b' se ha creado con éxito. <a href='instalar_db_procedimientos.ph'>Click aquí para instalar los procedimientos de la base de datos.</a>";
+  echo "La base de datos '{$config['db']['name']}' se ha creado con éxito. <a href='/'>Click aquí para volver al inicio</a>";
 } else {
   echo "Error en la creación de la base de datos: " . mysqli_error($conexion);
 }

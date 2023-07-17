@@ -20,7 +20,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $config = include '../../func_resources/php/config.php';
 
 $spreadsheet = new Spreadsheet();
-$nombre_archivo = 'Exportacion_Usuarios_' . $config['db']['trdm'] .'_ID-' . $_COOKIE['identificacion'];
+$nombre_archivo = 'Exportacion_Ventas_' . $config['db']['trdm'] .'_ID-' . $_COOKIE['identificacion'];
 
 // Conectar a la base de datos MySQL
 $servername = $config['db']['host'];
@@ -36,10 +36,7 @@ if ($conn->connect_error) {
 }
 
 // Ejecutar la consulta MySQL
-$query = isset($_GET['identificacion']) ? 
-				 "SELECT * FROM tbl_usuarios WHERE usr__numero_identificacion LIKE '%"
-				                                       . $_GET['identificacion'] . "%'"
-				 : "SELECT * FROM tbl_usuarios";
+$query = "SELECT * FROM ventas";
 $result = $conn->query($query);
 
 // Verificar si hay resultados
@@ -49,47 +46,28 @@ if ($result->num_rows > 0) {
   static $rowNumber = 1;
 
 	$sheet = $spreadsheet->getActiveSheet();
-	$sheet->setCellValue('A'.$rowNumber, '# Documento')
-        ->setCellValue('B'.$rowNumber, 'Primer Nombre')
-        ->setCellValue('C'.$rowNumber, 'Segundo Nombre')
-        ->setCellValue('D'.$rowNumber, 'Primer Apellido')
-        ->setCellValue('E'.$rowNumber, 'Segundo Apellido')
-        ->setCellValue('F'.$rowNumber, 'Correo Electrónico')
-        ->setCellValue('G'.$rowNumber, 'Número de Teléfono')
-        ->setCellValue('H'.$rowNumber, 'Dirección de Residencia')
-        ->setCellValue('I'.$rowNumber, 'Tipo de usuario')
-        ->setCellValue('J'.$rowNumber, 'Fecha de creación')
-        ->setCellValue('K'.$rowNumber, 'Fecha de actualización');
+	$sheet->setCellValue('A'.$rowNumber, 'ID Venta')
+        ->setCellValue('B'.$rowNumber, 'ID Producto')
+        ->setCellValue('C'.$rowNumber, 'Fecha')
+        ->setCellValue('D'.$rowNumber, 'Cantidad')
+        ->setCellValue('E'.$rowNumber, 'Precio Total');
 
 	$sheet->getStyle('A'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('B'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('C'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('D'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('E'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('F'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('G'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('H'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('I'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('J'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('K'.$rowNumber)->getFont()->setBold(true);
-
 	while ($row = $result->fetch_assoc()) {
 		$rowNumber++;
-        $sheet->setCellValue('A'.$rowNumber, $row["usr__numero_identificacion"])
-              ->setCellValue('B'.$rowNumber, $row["usr__nombre1"])
-              ->setCellValue('C'.$rowNumber, $row["usr__nombre2"])
-              ->setCellValue('D'.$rowNumber, $row["usr__apellido1"])
-              ->setCellValue('E'.$rowNumber, $row["usr__apellido2"])
-              ->setCellValue('F'.$rowNumber, $row["usr__correo_electronico"])
-              ->setCellValue('G'.$rowNumber, $row["usr__numero_celular"])
-              ->setCellValue('H'.$rowNumber, $row["usr__direccion"])
-              ->setCellValue('I'.$rowNumber, $row["usr__tipo_usuario"])
-              ->setCellValue('J'.$rowNumber, $row["usr__fecha_creacion"])
-          	  ->setCellValue('K'.$rowNumber, $row["usr__fecha_actualización"]);
+        $sheet->setCellValue('A'.$rowNumber, $row["id_venta"])
+              ->setCellValue('B'.$rowNumber, $row["id_producto"])
+              ->setCellValue('C'.$rowNumber, $row["fecha_venta"])
+              ->setCellValue('D'.$rowNumber, $row["cantidad"])
+              ->setCellValue('E'.$rowNumber, $row["precio_total"]);
     }
 
     // Ajustar automáticamente el ancho de las columnas
-	foreach (range('A', 'K') as $column) {
+	foreach (range('A', 'E') as $column) {
         $sheet->getColumnDimension($column)
               ->setAutoSize(true);
     }
@@ -99,7 +77,7 @@ if ($result->num_rows > 0) {
 // Si no hay registros en la base de datos muestra un mensaje al respecto
 elseif (!$result->num_rows) {
 	$sheet = $spreadsheet->getActiveSheet();
-	$sheet->setCellValue('A1', 'No hay registros de usuarios.');
+	$sheet->setCellValue('A1', 'No hay registros de ventas.');
 	$sheet->getStyle('A1')->getFont()->setBold(true)->setItalic(true);
 	$sheet->getColumnDimension('A')->setAutoSize(true);
 }

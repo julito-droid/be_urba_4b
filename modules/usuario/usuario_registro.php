@@ -50,7 +50,9 @@ if (isset($resultado)) {
     <div class="row">
       <div class="col-md-12">
         <div class="alert alert-<?= $resultado['error'] ? 'danger' : 'success' ?>" role="alert">
-          <?= $resultado['mensaje'] ?>
+          <?= $resultado['mensaje'] ?> <?php if (isset($_POST['submit']) && !isset($_COOKIE['identificacion'])) { ?>
+            <a class="btn btn-primary ml-2" href="/modules/login/iniciar_sesion.php">Ir a Inicio de sesión</a>
+          <?php } ?>
         </div>
       </div>
     </div>
@@ -58,7 +60,11 @@ if (isset($resultado)) {
   <?php
 }
 ?>
-
+<style>
+  input[type="radio"] {
+    display: none;
+  }
+</style>
 <div class="container">
   <div class="row">
     <div class="col-md-12">
@@ -111,12 +117,39 @@ if (isset($resultado)) {
           <input type="password" placeholder="Contraseña" name="contrasena" id="contrasena" class="form-control" required>
         </div>
 
-        <input type="hidden" value="1" name="tipo_usuario">
+        <?php if (isset($_COOKIE['tipo_usuario']) && $_COOKIE['tipo_usuario'] == 4) { ?>
+        <div class="form-group">
+          <label for="drop_tipos">Tipos de Usuarios</label>
+          <div class="dropdown" id="drop_tipos">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Tipos de Usuarios
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <input type="radio" id="pqr1" name="tipo_usuario" value="1" required>
+              <label for="pqr1" class="dropdown-item">Cliente</label>
+              <input type="radio" id="pqr2" name="tipo_usuario" value="2">
+              <label for="pqr2" class="dropdown-item">Vendedor</label>
+              <input type="radio" id="pqr3" name="tipo_usuario" value="3">
+              <label for="pqr3" class="dropdown-item">Asesor</label>
+              <input type="radio" id="pqr4" name="tipo_usuario" value="4">
+              <label for="pqr4" class="dropdown-item">Administrador</label>
+            </div>
+          </div>
+        </div>
+        <?php
+        } else {
+        ?>
+          <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="1">
+        <?php } ?>
 
         <div class="form-group">
           <input type="submit" name="submit" class="btn btn-primary" value="Enviar">
-          <a class="btn btn-primary" href="/index.html">Regresar al inicio</a>
-          <a class="btn btn-primary" href="usuarios_listar.php">Ver registros de usuarios</a>
+          <a class="btn btn-primary" href="/">Ir a la página principal</a>
+          <?php if (isset($_POST['submit']) && !isset($_COOKIE['identificacion'])) { ?>
+            <a class="btn btn-primary" href="/modules/login/iniciar_sesion.php">Ir a Inicio de sesión</a>
+          <?php } elseif (isset($_COOKIE['identificacion'])) { ?>
+            <a class="btn btn-primary" href="/modules/login/iniciar_sesion.php">Ir a Inicio</a>
+          <?php } ?>
         </div>
       </form>
     </div>

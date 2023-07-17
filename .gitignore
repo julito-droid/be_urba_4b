@@ -1,2 +1,12 @@
-vendor/
+﻿# Carpetas y archivos a ignorar por Git
+# Hecho por: Julián Andrés Giraldo Velásquez
+# El día: 08-jul-2023 16:20 UTC-5
+# Propósito: Decirle a Git que archivos y que carpetas no se deben subir a la
+# hora de hacer la carga del proyecto al repositorio de GitHub
 
+# Carpetas
+vendor/
+ejemplos_bootstrap/
+
+# Archivos
+composer.lock

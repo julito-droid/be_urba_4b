@@ -2,11 +2,11 @@
 
 // ************************ Validacion Acceso a Pagina ************************
 
-// Sino existe las cookies o si no es usuario Vendedor (2) o Admin (4) da error
+// Si no existe las cookies o si no es usuario Asesor (3) o Admin (4) da error
 
 if (!isset($_COOKIE['tipo_usuario'])) {
     header("Location: /error/404.php");
-} elseif (!($_COOKIE['tipo_usuario'] == 2 || $_COOKIE['tipo_usuario'] == 4)) {
+} elseif (!($_COOKIE['tipo_usuario'] == 3 || $_COOKIE['tipo_usuario'] == 4)) {
   header("Location: /error/404.php");
 }
 
@@ -23,9 +23,9 @@ if (!$conn) {
   $error = 'Error en la conexión: ' . mysqli_connect_error();
 } else {
   if (isset($_POST['busqueda'])) {
-    $consultaSQL = "SELECT * FROM tbl_usuarios WHERE usr__numero_identificacion LIKE '%" . $_POST['busqueda'] . "%'";
+    $consultaSQL = "SELECT * FROM tbl_pqr WHERE pqr__identificacion_solicitante LIKE '%" . $_POST['busqueda'] . "%'";
   } else {
-    $consultaSQL = "SELECT * FROM tbl_usuarios";
+    $consultaSQL = "SELECT * FROM tbl_pqr";
   }
 
   $resultados = mysqli_query($conn, $consultaSQL);
@@ -37,10 +37,10 @@ if (!$conn) {
   mysqli_close($conn);
 }
 
-$titulo = isset($_POST['busqueda']) ? 'Lista de usuarios (' . $_POST['busqueda'] . ')' : 'Lista de usuarios';
+$titulo = isset($_POST['busqueda']) ? 'Lista de PQRs por Usuario: (' . $_POST['busqueda'] . ')' : 'Lista de PQRs';
 ?>
 
-<?php include "../../templates/header.php";?>
+<?php include "../../templates/header.php"; ?>
 
 <?php
 if ($error) {
@@ -57,12 +57,12 @@ if ($error) {
   <?php
 }
 ?>
-<!-- Bloque que se encarga de mostrar botones de creación de Excel y el campo de busqueda -->
+
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <a href="usuario_registro.php" class="btn btn-primary mt-4">Crear usuario</a>
-      <a href="usuario_crear_excel.php<?= isset($_POST['busqueda']) ? '?identificacion=' . $_POST['busqueda'] : '' ?>" class="btn btn-success mt-4">Exportar a Excel <i class="bi bi-filetype-xlsx"></i></a>
+      <a href="pqr_registro.php" class="btn btn-primary mt-4">Crear PQR</a>
+      <a href="pqr_crear_excel.php<?= isset($_POST['busqueda']) ? '?identificacion=' . $_POST['busqueda'] : '' ?>" class="btn btn-success mt-4">Exportar a Excel <i class="bi bi-filetype-xlsx"></i></a>
       <a class="btn btn-primary mt-4 ml-4" href="/modules/login/iniciar_sesion.php">Ir a Inicio</a>
       <hr>
       <?php if ($resultados && mysqli_num_rows($resultados) > 0) { ?>
@@ -84,14 +84,13 @@ if ($error) {
       <table class="table">
         <thead>
           <tr>
+            <th>#</th>
             <th>Número de Documento</th>
-            <th colspan="2">Nombre(s)</th>
-            <th colspan="2">Apellido(s)</th>
-            <th>Email</th>
-            <th>Dirección</th>
-            <th>Teléfono</th>
-            <th>Tipo de usuario</th>
-            <th>Fecha creación</th>
+            <th>Tipo de PQR</th>
+            <th>Puntaje</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -99,30 +98,42 @@ if ($error) {
           <?php
           if ($resultados && mysqli_num_rows($resultados) > 0) {
             while ($fila = mysqli_fetch_assoc($resultados)) {
+              switch ($fila["pqr__puntuacion_calidad"]) {
+                case '1':
+                  $puntaje_color = "red";
+                  break;
+                case '2':
+                  $puntaje_color = "orange";
+                  break;
+                case '3':
+                  $puntaje_color = "green";
+                  break;
+                case '4':
+                  $puntaje_color = "blue";
+                  break;
+                case '5':
+                  $puntaje_color = "#FFD700";
+                  break;
+              }
               ?>
               <tr>
-                <td><?php echo escapar($fila["usr__numero_identificacion"]); ?></td>
-                <td><?php echo escapar($fila["usr__nombre1"]); ?></td>
-                <td style="color: lightgreen;"><?php echo escapar($fila["usr__nombre2"]); ?></td>
-                <td><?php echo escapar($fila["usr__apellido1"]); ?></td>
-                <td style="color: lightgreen;"><?php echo escapar($fila["usr__apellido2"]); ?></td>
-                <td><?php echo escapar($fila["usr__correo_electronico"]); ?></td>
-                <td><?php echo escapar($fila["usr__direccion"]); ?></td>
-                <td><?php echo escapar($fila["usr__numero_celular"]); ?></td>
-                <td><?php echo escapar($fila["usr__tipo_usuario"]); ?></td>
-                <td><?php echo escapar($fila["usr__fecha_creacion"]); ?></td>
+                <td><?php echo escapar($fila["pqr__id_pqr"]); ?></td>
+                <td><?php echo escapar($fila["pqr__identificacion_solicitante"]); ?></td>
+                <td><?php echo escapar($fila["pqr__tipo_pqr"]); ?></td>
+                <td><strong style="color: <?= $puntaje_color ?>"><?php echo escapar($fila["pqr__puntuacion_calidad"]); ?> / 5</strong></td>
+                <td><?php echo escapar($fila["pqr__fecha_pqr"]); ?></td>
+                <td class="text-break"><?php echo escapar($fila["pqr__descripcion"]); ?></td>
+                <td><?php echo !escapar($fila["pqr__respondido"]) ? "<strong style='color: red;'>No respondido</strong>" : "<strong style='color: green;'>Respondido</strong>"; ?></td>
                 
                 <td>
-                  <a href="<?= 'usuario_borrar.php?identificacion=' . escapar($fila["usr__numero_identificacion"]) . '&correo=' . escapar($fila["usr__correo_electronico"]) . '&contrasena=' . escapar($fila["usr__contrasena"]) ?>"><i class="bi bi-file-x" style="color: red;"></i> Borrar</a>
-                  <br>
-                  <a href="<?= 'usuario_editar.php?identificacion=' . escapar($fila["usr__numero_identificacion"]) ?>"><i class="bi bi-pencil-fill" style="color: green;"></i> Editar</a>
+                  <a href="<?= 'pqr_responder.php?id_pqr=' . escapar($fila["pqr__id_pqr"]) ?>"><i class="bi bi-pencil-fill" style="color: green;"></i> Responder</a>
                 </td>
               </tr>
               <?php
             }
           } elseif (!$resultados || mysqli_num_rows($resultados) == 0) { ?>
             <tr>
-            <td colspan="10"><i><strong>No hay registros de usuarios</strong></i></td>  
+            <td colspan="10"><i><strong>No hay registros de PQR's</strong></i></td>  
             </tr>
           <?php } ?>
         </tbody>

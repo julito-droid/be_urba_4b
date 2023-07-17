@@ -1,4 +1,24 @@
 <?php
+
+// ************************ Validacion Acceso a Pagina ************************
+
+// Si no existe las cookies o si no es usuario Asesor (3) con identificación, 
+// Cliente (1), Vendedor (2) o Admin (4) genera error
+
+if (!isset($_COOKIE['tipo_usuario'])) {
+    header("Location: /error/404.php");
+
+} elseif (!($_COOKIE['tipo_usuario'] == 3 && isset($_GET['identificacion']))) {
+  if (!($_COOKIE['tipo_usuario'] == 1 || $_COOKIE['tipo_usuario'] == 2
+            || $_COOKIE['tipo_usuario'] == 4)) {
+    header("Location: /error/404.php");
+  }
+}
+
+
+// ********************** Fin Validacion Acceso a Pagina **********************
+
+
 include '../../func_resources/php/funciones.php';
 
 $config = include '../../func_resources/php/config.php';
@@ -51,6 +71,15 @@ if (isset($_POST['submit'])) {
     }
 
     mysqli_close($conn);
+
+    if ($usuario['usr__numero_identificacion'] == $_COOKIE['identificacion']) {
+      $nombre = $usuario['usr__nombre1'] . ' ' . $usuario['usr__apellido1'];
+      setcookie('identificacion', $usuario['usr__numero_identificacion'], time() + (24 * 3600 * 30), "/" );
+      setcookie('correo',         $usuario['usr__correo_electronico'],    time() + (24 * 3600 * 30), "/" );
+      setcookie('tipo_usuario',   $usuario['usr__tipo_usuario'],          time() + (24 * 3600 * 30), "/" ); 
+      setcookie('contrasena',     $usuario['usr__contrasena'],            time() + (24 * 3600 * 30), "/" );
+      setcookie('nombre',         $nombre,                                time() + (24 * 3600 * 30), "/" );
+    }
   }
 }
 
@@ -90,7 +119,7 @@ if ($resultado['error']) {
     <div class="row">
       <div class="col-md-12">
         <div class="alert alert-danger" role="alert">
-          <?= $resultado['mensaje'] ?>
+          <?= $resultado['mensaje'] ?> <a class="btn btn-primary ml-2" href="/modules/login/iniciar_sesion.php">Ir a Inicio</a>
         </div>
       </div>
     </div>
@@ -106,7 +135,7 @@ if (isset($_POST['submit']) && !$resultado['error']) {
     <div class="row">
       <div class="col-md-12">
         <div class="alert alert-success" role="alert">
-          El usuario ha sido actualizado correctamente
+          El usuario ha sido actualizado correctamente <a class="btn btn-primary ml-2" href="/modules/login/iniciar_sesion.php">Ir a Inicio</a>
         </div>
       </div>
     </div>
@@ -118,6 +147,11 @@ if (isset($_POST['submit']) && !$resultado['error']) {
 <?php
 if (isset($usuario) && $usuario) {
   ?>
+  <style>
+    input[type="radio"] {
+      display: none;
+    }
+  </style>
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -170,12 +204,37 @@ if (isset($usuario) && $usuario) {
             <input type="password" placeholder="Contraseña" name="contrasena" id="contrasena" class="form-control" value="<?= $usuario['usr__contrasena'] ?>" required>
           </div>
 
-          <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="<?= $usuario['usr__tipo_usuario'] ?>">
+          <?php if (isset($_COOKIE['tipo_usuario']) && $_COOKIE['tipo_usuario'] == 4) { ?>
+          <div class="form-group">
+            <label for="drop_tipos">Tipos de Usuarios</label>
+            <div class="dropdown" id="drop_tipos">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Tipos de Usuarios
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <input type="radio" id="pqr1" name="tipo_usuario" value="1" required>
+                <label for="pqr1" class="dropdown-item">Cliente</label>
+                <input type="radio" id="pqr2" name="tipo_usuario" value="2">
+                <label for="pqr2" class="dropdown-item">Vendedor</label>
+                <input type="radio" id="pqr3" name="tipo_usuario" value="3">
+                <label for="pqr3" class="dropdown-item">Asesor</label>
+                <input type="radio" id="pqr4" name="tipo_usuario" value="4">
+                <label for="pqr4" class="dropdown-item">Administrador</label>
+              </div>
+            </div>
+          </div>
+          <?php
+          } else {
+          ?>
+            <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="<?= $usuario['usr__tipo_usuario'] ?>">
+          <?php } ?>
 
           <div class="form-group">
             <input type="submit" name="submit" class="btn btn-primary" value="Actualizar">
-            <a class="btn btn-primary" href="/index.html">Regresar al inicio</a>
+            <a class="btn btn-primary" href="/modules/login/iniciar_sesion.php">Ir a Inicio</a>
+            <?php if ($_COOKIE['tipo_usuario'] == 2 || $_COOKIE['tipo_usuario'] == 4) { ?>
             <a class="btn btn-primary" href="usuarios_listar.php">Ver registros de usuarios</a>
+          <?php } ?>
           </div>
         </form>
       </div>

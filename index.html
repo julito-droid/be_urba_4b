@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -7,68 +7,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="index.css">
-    <title>BE URBAN</title>
+    <style>
+        body {
+            background-color: #FF7F50;
+        }
+        .box {
+            background-color: #FF8C69;
+            border: 1px solid #FF4500;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .box img {
+            max-width: 100%;
+            height: auto;
+        }
+        .box h3 {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #FF4500;
+        }
+        .box p {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #000000;
+        }
+        @media (max-width: 768px) {
+            .title {
+                font-size: 40px;
+            }
+            .box-container {
+                flex-direction: column;
+            }
+            .box {
+                margin: 20px 0;
+            }
+        }
+    </style>
+    <title>Feeder Matic</title>
 </head>
 
 <body>
     <header class="head">
         <div class="logo">
-            <img src="" alt=""> BE URBAN
+            <img src="" alt=""> Feeder Matic
         </div>
         <nav class="navbar">
-            <a href="modules/usuario/usuarios_listar.php">Ver Usuarios</a>
-            <a href="modules/usuario/usuario_registro.php">Registrarse</a>
+            <a href="modules/login/iniciar_sesion.php">Iniciar Sesion</a>
+            <!--a href="modules/usuario/usuario_registro.php">Registrar Usuario</a-->
             <!--a href="productos.html">Productos</a-->
         </nav>
     </header>
 
     <section class="content header">
-        <h2 class="title">BE URBAN</h2>
-        <p>Bienvenidos a BE URBAN. Aquí podrás encontrar tu nuevo estilo urbano.</p>
+        <h2 class="title">FEEDER MATIC</h2>
+        <p>Bienvenidos a Feeder Matic. Aquí podrás encontrar todo lo relacionado con dispensadores de comida para mascotas y cuidado de mascotas.</p>
     </section>
 
     <section class="content sau">
         <h2 class="title">Productos</h2>
-        <p>Estos son algunos de nuestros productos que podrás encontrar en BE URBAN.</p>
+        <p>Estos son algunos de nuestros productos que podrás encontrar en Feeder Matic.</p>
         <div class="box-container">
             <div class="box">
-                <img src="img/14.jpg" alt="saco con capota">
-                <h3>Saco con Capota</h3>
-                <p>Saco con capota, color negro con estampado de dragón.</p>
+                <img src="img/14.jpg" alt="Dispensador de comida para perro" style="height:140px;">
+                <h3>Dispensador</h3>
+                <p></p>
             </div>
             <div class="box">
-                <img src="img/12.jpg" alt="saco con capota">
-                <h3>Saco con Capota</h3>
-                <p>Saco con capota, color rosa pálido con estampado.</p>
+                <img src="img/12.jpg" alt="Comida para perro" style="height:140px;">
+                <h3>Comida</h3>
+                <p></p>
             </div>
             <div class="box">
-                <img src="img/1.jpg" alt="buso">
-                <h3>Buso</h3>
-                <p>Buso color blanco con detalles o estampado color negro.</p>
+                <img src="img/1.jpg" alt="Cepillo para el pelo de las mascotas" style="height:140px;">
+                <h3>Cepillo para el pelo</h3>
+                <p></p>
             </div>
         </div>
     </section>
 
     <section class="content about">
         <h2 class="title">Nosotros</h2>
-        <p>BE URBAN es una pequeña página web que muestra variedad de ropa juvenil, donde podrás encontrar busos y sacos personalizados que reflejen tu personalidad.</p>
-        <p>BE URBAN busca darte un nuevo concepto de estilo para que puedas escoger el que más te llama la atención y esté al alcance de tu bolsillo. Si estás buscando ropa juvenil o a la moda de los jóvenes, entonces BE URBAN es para ti.</p>
+        <p>Feeder Matic es una pequeña página web dedicada a ofrecer dispensadores de comida para mascotas y productos relacionados con el cuidado de mascotas.</p>
+        <p>En Feeder Matic nos preocupamos por brindarte productos de calidad que ayuden a mantener la salud y bienestar de tus mascotas. Nuestro objetivo es facilitar la alimentación de tus mascotas y ofrecerte soluciones prácticas y seguras para su cuidado.</p>
     </section>
 
     <section class="content price">
         <article class="contain">
             <h2 class="title">Precio</h2>
-            <p>En BE URBAN podrás encontrar variedad de precios que están al alcance de tu bolsillo. En el siguiente botón podrás encontrar más variedad de productos que se ajustan a tu alcance.</p>
-            <a href="productos.html" class="btn">Saber precio</a>
+            <p>En Feeder Matic ofrecemos una amplia variedad de precios que se ajustan a diferentes presupuestos. Visita nuestra sección de productos para conocer más opciones que se adapten a tu bolsillo.</p>
+            <a href="productos.html" class="btn">Ver precios</a>
         </article>
     </section>
 
     <section class="content contact">
         <h2 class="title">Contacto</h2>
-        <p>+57: 3160506399</p>
-        <p>Correo electrónico: BEurban@gmail.com</p>
+        <p>Teléfono: +57 3160506399</p>
+        <p>Correo electrónico: feeder.matic@gmail.com</p>
         <figure class="map">
-            <img src="img/contacto.jpeg" alt="mapa">
+            <img src="img/contacto.jpeg" alt="mapa" height="150">
         </figure>
     </section>
 </body>

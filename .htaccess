@@ -1,4 +1,13 @@
+# Archivo de configuración de servidor Apache
+# Hecho por: Julián Andrés Giraldo Velásquez
+# El día: 08-jul-2023 16:22 UTC-5
+# Propósito: Indicarle acciones específicas al servidor de lo que debe hacer 
+# con ciertos recursos y/o situaciones, en este caso, para manejo de errores
+# HTTP 404 y 500
+
+# Permiso para reescribir la URL de acceso al recurso
 RewriteEngine On
 
-ErrorDocument 404 /error/404.php
+# Manejo de errores HTTP
 ErrorDocument 500 /error/500.php
+ErrorDocument 404 /error/404.php

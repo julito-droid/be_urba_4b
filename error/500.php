@@ -91,7 +91,7 @@
 
 	<main class="text-center form-signin w-100 m-auto">
 	  	<form>
-		    <img class="mb-4" src="/error/img_500.jpg" alt="">
+		    <img class="mb-4" src="/error/img_500.jpg" alt="" width="45%">
 
 		    <h1 class="h3 mb-3 fw-normal">Error 500 Internal Server Error (Error interno del servidor)</h1>
 		    

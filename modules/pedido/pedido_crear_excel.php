@@ -5,12 +5,12 @@
 // Sino existe las cookies o si no es usuario Vendedor (2) o Admin (4) da error
 
 if (!isset($_COOKIE['tipo_usuario'])) {
-    header("Location: /error/404.php");
+  header("Location: /error/404.php");
 } elseif (!($_COOKIE['tipo_usuario'] == 2 || $_COOKIE['tipo_usuario'] == 4)) {
   header("Location: /error/404.php");
 }
 
-// ********************** Fin Validacion Acceso a Pagina **********************
+// ********************** Fin Validacion Acceso a Pagina ********************** 
 
 require '../../vendor/autoload.php';
 
@@ -20,7 +20,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $config = include '../../func_resources/php/config.php';
 
 $spreadsheet = new Spreadsheet();
-$nombre_archivo = 'Exportacion_Usuarios_' . $config['db']['trdm'] .'_ID-' . $_COOKIE['identificacion'];
+$nombre_archivo = 'Exportacion_Pedidos_' . $config['db']['trdm'] .'_ID-' . $_COOKIE['identificacion'];
 
 // Conectar a la base de datos MySQL
 $servername = $config['db']['host'];
@@ -36,10 +36,7 @@ if ($conn->connect_error) {
 }
 
 // Ejecutar la consulta MySQL
-$query = isset($_GET['identificacion']) ? 
-				 "SELECT * FROM tbl_usuarios WHERE usr__numero_identificacion LIKE '%"
-				                                       . $_GET['identificacion'] . "%'"
-				 : "SELECT * FROM tbl_usuarios";
+$query = "SELECT * FROM pedidos";
 $result = $conn->query($query);
 
 // Verificar si hay resultados
@@ -49,17 +46,12 @@ if ($result->num_rows > 0) {
   static $rowNumber = 1;
 
 	$sheet = $spreadsheet->getActiveSheet();
-	$sheet->setCellValue('A'.$rowNumber, '# Documento')
-        ->setCellValue('B'.$rowNumber, 'Primer Nombre')
-        ->setCellValue('C'.$rowNumber, 'Segundo Nombre')
-        ->setCellValue('D'.$rowNumber, 'Primer Apellido')
-        ->setCellValue('E'.$rowNumber, 'Segundo Apellido')
-        ->setCellValue('F'.$rowNumber, 'Correo Electrónico')
-        ->setCellValue('G'.$rowNumber, 'Número de Teléfono')
-        ->setCellValue('H'.$rowNumber, 'Dirección de Residencia')
-        ->setCellValue('I'.$rowNumber, 'Tipo de usuario')
-        ->setCellValue('J'.$rowNumber, 'Fecha de creación')
-        ->setCellValue('K'.$rowNumber, 'Fecha de actualización');
+	$sheet->setCellValue('A'.$rowNumber, '#')
+        ->setCellValue('B'.$rowNumber, 'Fecha')
+        ->setCellValue('C'.$rowNumber, 'Dirección')
+        ->setCellValue('D'.$rowNumber, 'ID Estado')
+        ->setCellValue('E'.$rowNumber, 'ID Producto')
+        ->setCellValue('F'.$rowNumber, 'ID Usuario');
 
 	$sheet->getStyle('A'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('B'.$rowNumber)->getFont()->setBold(true);
@@ -67,29 +59,19 @@ if ($result->num_rows > 0) {
 	$sheet->getStyle('D'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('E'.$rowNumber)->getFont()->setBold(true);
 	$sheet->getStyle('F'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('G'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('H'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('I'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('J'.$rowNumber)->getFont()->setBold(true);
-	$sheet->getStyle('K'.$rowNumber)->getFont()->setBold(true);
 
 	while ($row = $result->fetch_assoc()) {
 		$rowNumber++;
-        $sheet->setCellValue('A'.$rowNumber, $row["usr__numero_identificacion"])
-              ->setCellValue('B'.$rowNumber, $row["usr__nombre1"])
-              ->setCellValue('C'.$rowNumber, $row["usr__nombre2"])
-              ->setCellValue('D'.$rowNumber, $row["usr__apellido1"])
-              ->setCellValue('E'.$rowNumber, $row["usr__apellido2"])
-              ->setCellValue('F'.$rowNumber, $row["usr__correo_electronico"])
-              ->setCellValue('G'.$rowNumber, $row["usr__numero_celular"])
-              ->setCellValue('H'.$rowNumber, $row["usr__direccion"])
-              ->setCellValue('I'.$rowNumber, $row["usr__tipo_usuario"])
-              ->setCellValue('J'.$rowNumber, $row["usr__fecha_creacion"])
-          	  ->setCellValue('K'.$rowNumber, $row["usr__fecha_actualización"]);
+        $sheet->setCellValue('A'.$rowNumber, $row["id_pedido"])
+              ->setCellValue('B'.$rowNumber, $row["fecha"])
+              ->setCellValue('C'.$rowNumber, $row["direccion"])
+              ->setCellValue('D'.$rowNumber, $row["id_estado"])
+              ->setCellValue('E'.$rowNumber, $row["id_producto"])
+              ->setCellValue('F'.$rowNumber, $row["id_usuario"]);
     }
 
     // Ajustar automáticamente el ancho de las columnas
-	foreach (range('A', 'K') as $column) {
+	foreach (range('A', 'F') as $column) {
         $sheet->getColumnDimension($column)
               ->setAutoSize(true);
     }
@@ -99,7 +81,7 @@ if ($result->num_rows > 0) {
 // Si no hay registros en la base de datos muestra un mensaje al respecto
 elseif (!$result->num_rows) {
 	$sheet = $spreadsheet->getActiveSheet();
-	$sheet->setCellValue('A1', 'No hay registros de usuarios.');
+	$sheet->setCellValue('A1', 'No hay registros de pedidos.');
 	$sheet->getStyle('A1')->getFont()->setBold(true)->setItalic(true);
 	$sheet->getColumnDimension('A')->setAutoSize(true);
 }
